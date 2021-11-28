@@ -20,4 +20,8 @@ public class AdminTheaterForm {
     @NotNull
     private Integer theaterType;
 
+    @NotNull
+    @Min(0)
+    private Integer gridStructure;
+
 }

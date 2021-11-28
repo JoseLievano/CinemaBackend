@@ -10,7 +10,7 @@ public interface DefaultService < DTO, MINIDTO, FORM, UFORM, ID >{
 
     List<DTO> getAll();
 
-    MINIDTO insert(FORM form);
+    MINIDTO insert(FORM form) throws ElementNotFoundExeption;
 
     DTO update(ID id, UFORM form) throws ElementNotFoundExeption;
 

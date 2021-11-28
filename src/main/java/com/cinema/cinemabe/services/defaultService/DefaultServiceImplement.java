@@ -34,7 +34,7 @@ public abstract class DefaultServiceImplement <DTO, MINIDTO, FORM, UFORM, ENTITY
     }
 
     @Override
-    public MINIDTO insert(FORM form) {
+    public MINIDTO insert(FORM form) throws ElementNotFoundExeption {
         return mapper.toSmallDTO( repository.save(mapper.toEntity( form ) ) );
     }
 
