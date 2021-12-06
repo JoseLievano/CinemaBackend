@@ -21,7 +21,8 @@ import com.cinema.cinemabe.services.defaultService.DefaultServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class AdminTheaterServiceImplement extends DefaultServiceImplement <AdminTheaterDTO, AdminTheaterMiniDTO, AdminTheaterForm, AdminTheaterUpdateForm, Theater, Integer> {
@@ -90,22 +91,54 @@ public class AdminTheaterServiceImplement extends DefaultServiceImplement <Admin
             GridStructure gridStructure = gridStructureRepository.getById(uform.getGridStructure());
             toUpdate.setGridStructure(gridStructure);
 
-            //Remove all seats because we need to generate new ones
-            toUpdate.getZones()
-                    .stream()
-                    .forEach(zone -> zoneRepository.delete(zone));
-
         }
 
         repository.save(toUpdate);
 
         //Regenerate seats only if grid was updated
         if (gridUpdated){
+
+            //Remove all seats because we need to generate new ones
+            flushSeats(toUpdate.getId());
+
+            System.out.println("Seats list is: " + toUpdate.getZones().size() );
+
             //We pass the new information to the generateSeats() functions to create the new seats, because we already remove the old ones.
             generateSeats(toUpdate.getGridStructure().getBluePrint(), toUpdate.getGridStructure().getColumns(), toUpdate.getGridStructure().getRows(), toUpdate);
         }
 
         return mapper.toDTO(toUpdate);
+
+    }
+
+    public boolean flushSeats(Integer id) throws ElementNotFoundExeption {
+
+        Theater theater = repository.findById(id).orElseThrow(ElementNotFoundExeption::new);
+
+        List<Zone> zones = theater.getZones();
+
+        while (theater.getZones().size() > 0){
+
+            Zone actualZone = zones.get(0);
+
+            Integer idactual = actualZone.getId();
+
+            System.out.println("Borrando: " + actualZone.getId());
+
+            zoneRepository.delete(actualZone);
+
+            if (zoneRepository.existsById(idactual)){
+                System.out.println("aun existe :S" + idactual);
+            }else {
+                System.out.println("Ya no existe :P" + idactual);
+            }
+        }
+
+        if (theater.getZones().size() == 0){
+            return true;
+        }else {
+            return false;
+        }
 
     }
 
@@ -121,9 +154,9 @@ public class AdminTheaterServiceImplement extends DefaultServiceImplement <Admin
         All avalible seats are represented by 1, and blank space is 0
         */
 
-        String abc[] = {"A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","Ak","AL","AM","AN"};
+        String[] abc = {"A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","Ak","AL","AM","AN"};
         System.out.println(abc.length);
-        AdminZoneMiniDTO zone [][] =new AdminZoneMiniDTO[col][row];
+        AdminZoneMiniDTO[][] zone =new AdminZoneMiniDTO[row][col];
 
         int counterBluePrint = 0;
         int nameCounter = 1;
@@ -131,6 +164,7 @@ public class AdminTheaterServiceImplement extends DefaultServiceImplement <Admin
         for (int i = 0; i < zone.length; i++){
 
             String colLetter = abc[i];
+            Integer seatNumber = 1;
 
             for (int z = 0; z < zone[i].length; z++){
 
@@ -142,9 +176,12 @@ public class AdminTheaterServiceImplement extends DefaultServiceImplement <Admin
 
                 if (actualState == '1'){
                     isSeat= true;
-                    name = colLetter + nameCounter;
+                    name = colLetter + seatNumber;
                     nameCounter++;
+                    seatNumber++;
                 }
+
+                System.out.println(name);
 
                 AdminZoneForm newForm = AdminZoneForm.builder()
                         .name(name)

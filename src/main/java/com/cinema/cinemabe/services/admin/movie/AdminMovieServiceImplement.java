@@ -8,7 +8,9 @@ import com.cinema.cinemabe.models.form.admin.movie.AdminMovieForm;
 import com.cinema.cinemabe.models.formUpdate.admin.movie.AdminMovieUpdateForm;
 import com.cinema.cinemabe.repository.MovieRepository;
 import com.cinema.cinemabe.services.defaultService.DefaultServiceImplement;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AdminMovieServiceImplement extends DefaultServiceImplement<AdminMovieDTO, AdminMovieMiniDTO, AdminMovieForm, AdminMovieUpdateForm, Movie, Integer> {
 
     protected AdminMovieServiceImplement(MovieRepository repository, MovieMapper mapper){

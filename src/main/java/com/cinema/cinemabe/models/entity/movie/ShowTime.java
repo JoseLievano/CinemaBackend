@@ -42,4 +42,11 @@ public class ShowTime {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
+
+    public void addNewZone(List<Zone> newZones){
+
+        this.zones.addAll(newZones);
+
+    }
+
 }

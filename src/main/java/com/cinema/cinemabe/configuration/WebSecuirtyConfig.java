@@ -20,7 +20,7 @@ public class WebSecuirtyConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("admin").password(encoder.encode("pass")).authorities("ADMIN", "CLIENT")
                 .and()
-                .withUser("user").password(encoder.encode("pass")).authorities("CLIENT");
+                .withUser("User").password(encoder.encode("pass")).authorities("CLIENT");
     }
 
     @Override

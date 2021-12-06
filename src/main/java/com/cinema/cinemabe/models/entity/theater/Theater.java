@@ -33,7 +33,20 @@ public class Theater {
     @JoinColumn(name = "theater_id")
     private List<ShowTime> showTimes;
 
-    @OneToMany(mappedBy = "theater", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL)
     private List<Zone> zones;
+
+    public void addZone(Zone zone){
+        this.zones.add(zone);
+    }
+
+    public void removeZone (Zone zone){
+        this.zones.remove(zone);
+    }
+
+    public void flushZones (){
+        this.zones.forEach(zone -> zone.removeTheater());
+        this.zones.clear();
+    }
 
 }

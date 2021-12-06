@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class DefaultController <DTO, MINIDTO, FORM, UFORM, ID>{
 
-    private final DefaultService <DTO, MINIDTO, FORM, UFORM, ID> service;
+    protected final DefaultService <DTO, MINIDTO, FORM, UFORM, ID> service;
 
     protected DefaultController(DefaultService<DTO, MINIDTO, FORM, UFORM, ID> service){
         this.service = service;
@@ -27,7 +27,7 @@ public abstract class DefaultController <DTO, MINIDTO, FORM, UFORM, ID>{
     }
 
     @PostMapping
-    public ResponseEntity<MINIDTO> insert (@Valid @RequestBody FORM form){
+    public ResponseEntity<MINIDTO> insert (@Valid @RequestBody FORM form) throws ElementNotFoundExeption {
         return ResponseEntity.ok(service.insert(form));
     }
 

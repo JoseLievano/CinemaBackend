@@ -26,12 +26,18 @@ public class Zone {
     @Column(nullable = false)
     private Boolean isASeat;
 
-    @ManyToMany(mappedBy = "zones", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "zones")
     private List<ShowTime> showTimes;
 
 
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
-    @JoinColumn(name = "theater_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "theater_id")
     private Theater theater;
+
+    @PreRemove
+    public void removeTheater(){
+        this.theater.removeZone(this);
+        this.theater = null;
+    }
 
 }
